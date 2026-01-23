@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neon Music Player</title>
 <style>
+/* Body & Layout */
 body {
     margin: 0;
     font-family: 'Arial', sans-serif;
@@ -14,6 +15,28 @@ body {
     height: 100vh;
     overflow: hidden;
 }
+
+/* Top-right clickable link */
+#top-right-channel {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    z-index: 1000;
+}
+#top-channel-link {
+    color: #0ff;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-decoration: none;
+    text-shadow: 0 0 5px #0ff;
+    transition: all 0.3s ease;
+}
+#top-channel-link:hover {
+    color: #f0f;
+    text-shadow: 0 0 10px #f0f, 0 0 20px #0ff;
+}
+
+/* Sidebar */
 #sidebar {
     width: 240px;
     background: #111;
@@ -45,6 +68,8 @@ body {
     color: #f0f;
     text-shadow: 0 0 10px #f0f;
 }
+
+/* Main player */
 #main-player {
     flex: 1;
     display: flex;
@@ -60,12 +85,17 @@ body {
     width: 80%;
     max-width: 500px;
     text-align: center;
+    position: relative;
 }
+
+/* Current track */
 #currentTrackName {
     color: #0ff;
     font-size: 1.2em;
     margin-bottom: 20px;
 }
+
+/* Player buttons */
 .player-buttons {
     display: flex;
     justify-content: center;
@@ -85,6 +115,8 @@ button.control {
 button.control:hover {
     transform: scale(1.1);
 }
+
+/* Progress bar */
 #progressContainer {
     width: 100%;
     height: 10px;
@@ -107,22 +139,30 @@ button.control:hover {
     font-size: 14px;
     margin-bottom: 20px;
 }
-label {
+
+/* Volume and Playback */
+#controls-group {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+.control-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.control-item label {
     color: #0ff;
-    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
-input[type="range"] {
-    width: 80%;
-    margin: 10px 0;
+.control-item input,
+.control-item select {
+    width: 120px;
 }
-select {
-    padding: 6px;
-    border-radius: 6px;
-    border: 2px solid #0ff;
-    background: #111;
-    color: #0ff;
-    outline: none;
-}
+
+/* Responsive */
 @media (max-width: 800px) {
     body { flex-direction: column; overflow-y: auto; }
     #sidebar { width: 100%; max-height: 200px; display: flex; overflow-x: auto; overflow-y: hidden; }
@@ -134,14 +174,24 @@ select {
 </head>
 <body>
 
+<!-- Top-right clickable link -->
+<div id="top-right-channel">
+    <a href="https://youtube.com/@thegospelpreacherministries?si=TtKJ5HLXuYd4Ixf6" target="_blank" id="top-channel-link">
+        The Gospel Preacher Ministries
+    </a>
+</div>
+
+<!-- Sidebar -->
 <div id="sidebar">
     <h2>Playlist</h2>
     <ul id="sidebar-playlist"></ul>
 </div>
 
+<!-- Main player -->
 <div id="main-player">
     <div id="player-container">
         <p id="currentTrackName">Select a song to play</p>
+
         <div class="player-buttons">
             <button class="control" id="shuffleBtn">In Order</button>
             <button class="control" id="prevBtn">⏮</button>
@@ -149,24 +199,33 @@ select {
             <button class="control" id="nextBtn">⏭</button>
             <button class="control" id="repeatBtn">Repeat Off</button>
         </div>
+
         <div id="progressContainer"><div id="progressBar"></div></div>
         <div id="time-display"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
-        <label>Volume</label><br>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
-        <label>Playback Speed</label><br>
-        <select id="playbackSpeed">
-            <option value="0.5">0.5x</option>
-            <option value="1" selected>1x</option>
-            <option value="1.25">1.25x</option>
-            <option value="1.5">1.5x</option>
-            <option value="2">2x</option>
-        </select>
+
+        <div id="controls-group">
+            <div class="control-item">
+                <label for="volumeSlider">Volume</label>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+            </div>
+            <div class="control-item">
+                <label for="playbackSpeed">Playback Speed</label>
+                <select id="playbackSpeed">
+                    <option value="0.5">0.5x</option>
+                    <option value="1" selected>1x</option>
+                    <option value="1.25">1.25x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2x</option>
+                </select>
+            </div>
+        </div>
     </div>
 </div>
 
 <audio id="audioPlayer"></audio>
 
 <script>
+// Playlist
 let playlist = [
 "A Way to Escape.mp3",
 "A Wedding Invitation.mp3",
@@ -177,8 +236,7 @@ let playlist = [
 "God Handled It All.mp3",
 "Happy Home Above.mp3",
 "He Can Move the Highest Mountain.mp3",
-"He'll Be To You.mp3",
-"Home in Heaven.mp3",
+"He'll Be To You.mp3","Home in Heaven.mp3",
 "I Can Go In.mp3",
 "I Know a Man Who Can.mp3",
 "I Serve A God.mp3",
@@ -188,6 +246,7 @@ let playlist = [
 "I've Never Been Sorry.mp3",
 "I'm Too Far From Where I Started.mp3",
 "It Pays to Serve the Lord.mp3",
+"Jesus Signed My Pardon.mp3",
 "Love Grew Where the Blood Fell.mp3",
 "Mansion over the Hiltop.mp3",
 "No Regrets.mp3",
@@ -197,15 +256,16 @@ let playlist = [
 "The Blood is Still There.mp3",
 "The Old Gospel Ship.mp3",
 "There's a Record Book.mp3",
-"They Came Out Serving God.mp3",
-"Jesus Signed My Pardon.mp3"
+"They Came Out Serving God.mp3"
 ];
-
 let sortedPlaylist = [...playlist].sort((a,b)=>a.localeCompare(b));
+
+// Player state
 let currentTrack = 0;
 let isPlaying = false;
 let isShuffled = false;
 let repeatMode = 0;
+let shuffleHistory = [];
 
 const audioPlayer = document.getElementById("audioPlayer");
 const sidebarPlaylist = document.getElementById("sidebar-playlist");
@@ -222,6 +282,7 @@ const durationEl = document.getElementById("duration");
 const volumeSlider = document.getElementById("volumeSlider");
 const playbackSpeed = document.getElementById("playbackSpeed");
 
+// Build sidebar
 sortedPlaylist.forEach(song => {
     const li = document.createElement("li");
     li.textContent = song;
@@ -242,6 +303,11 @@ function playTrack(){
     isPlaying = true;
     currentTrackName.textContent = "Now Playing: " + playlist[currentTrack];
     updatePlayButton();
+    if(isShuffled){
+        if(shuffleHistory[shuffleHistory.length-1] !== currentTrack){
+            shuffleHistory.push(currentTrack);
+        }
+    }
 }
 
 function togglePlayPause(){
@@ -257,14 +323,22 @@ function togglePlayPause(){
 function updatePlayButton(){ playPauseBtn.textContent = isPlaying ? "❚❚" : "▶"; }
 
 function prevTrack(){
-    if(isShuffled) currentTrack = Math.floor(Math.random()*playlist.length);
-    else currentTrack = (currentTrack-1+playlist.length)%playlist.length;
+    if(isShuffled){
+        if(shuffleHistory.length > 1){
+            shuffleHistory.pop();
+            currentTrack = shuffleHistory[shuffleHistory.length-1];
+        } else currentTrack = shuffleHistory[0] || currentTrack;
+    } else currentTrack = (currentTrack-1+playlist.length)%playlist.length;
     playTrack();
 }
 
 function nextTrack(){
-    if(isShuffled) currentTrack = Math.floor(Math.random()*playlist.length);
-    else currentTrack = (currentTrack+1)%playlist.length;
+    if(isShuffled){
+        let next;
+        do { next = Math.floor(Math.random() * playlist.length); }
+        while(next === currentTrack && playlist.length>1);
+        currentTrack = next;
+    } else currentTrack = (currentTrack+1)%playlist.length;
     playTrack();
 }
 
@@ -272,6 +346,7 @@ function nextTrack(){
 shuffleBtn.addEventListener("click", ()=>{
     isShuffled=!isShuffled;
     shuffleBtn.textContent=isShuffled?"Shuffle":"In Order";
+    if(isShuffled) shuffleHistory=[currentTrack];
 });
 
 // Repeat
@@ -280,7 +355,7 @@ repeatBtn.addEventListener("click", ()=>{
     repeatBtn.textContent=repeatMode===0?"Repeat Off":repeatMode===1?"Repeat All":"Repeat Current Track";
 });
 
-// Progress bar dragging
+// Progress dragging
 let isDragging = false;
 progressContainer.addEventListener("mousedown", e=>{ isDragging = true; setProgress(e); });
 progressContainer.addEventListener("mousemove", e=>{ if(isDragging) setProgress(e); });
@@ -292,24 +367,18 @@ function setProgress(e){
     audioPlayer.currentTime = pos*audioPlayer.duration;
 }
 
-// Update progress bar while playing
+// Update progress
 audioPlayer.addEventListener("timeupdate",()=>{
     if(!audioPlayer.duration) return;
     progressBar.style.width=(audioPlayer.currentTime/audioPlayer.duration)*100+"%";
     currentTimeEl.textContent=formatTime(audioPlayer.currentTime);
     durationEl.textContent=formatTime(audioPlayer.duration);
 });
+function formatTime(sec){ const m=Math.floor(sec/60); const s=Math.floor(sec%60); return `${m}:${s<10?"0":""}${s}`; }
 
-function formatTime(sec){
-    const m=Math.floor(sec/60); const s=Math.floor(sec%60);
-    return `${m}:${s<10?"0":""}${s}`;
-}
-
-// Volume
+// Volume & speed
 volumeSlider.addEventListener("input",()=>{audioPlayer.volume=volumeSlider.value; localStorage.setItem("volume",volumeSlider.value);});
-// Playback speed
 playbackSpeed.addEventListener("change",()=>{audioPlayer.playbackRate=playbackSpeed.value;});
-// Persist volume
 window.onload=()=>{
     const vol=localStorage.getItem("volume");
     if(vol){audioPlayer.volume=vol; volumeSlider.value=vol;}
@@ -320,7 +389,7 @@ playPauseBtn.addEventListener("click",togglePlayPause);
 prevBtn.addEventListener("click",prevTrack);
 nextBtn.addEventListener("click",nextTrack);
 
-// Auto next track
+// Auto next
 audioPlayer.addEventListener("ended",()=>{
     if(repeatMode===2) playTrack();
     else if(currentTrack===playlist.length-1){
